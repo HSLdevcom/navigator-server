@@ -60,8 +60,8 @@ event_carrier.on 'line', (line) ->
             odometer: parseFloat info.distance_from_start
             speed: (parseFloat info.speed) / 3.6
         timestamp: (parseInt info.unix_epoch_gps_time) / 1000
-    console.log info
+    #console.log info
     path = "/location/helsinki/#{out_info.trip.route}/#{out_info.vehicle.id}"
-    console.log path
-    console.log out_info
+    #console.log path
+    #console.log out_info
     bay_client.publish path, out_info
