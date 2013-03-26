@@ -6,11 +6,11 @@ class TfGMClient
         @dev_key = 'e5541db9-e410-45d0-8481-08adf0a193ce'
         @app_key = '2c4abc94-240f-490e-bb86-880471640b37'
         @routes =
-            'MET3':
+            '3':
                 gtfs_name: 'GMN:   3:C:'
-            'MET2':
+            '2':
                 gtfs_name: 'GMN:   2:C:'
-            'MET1':
+            '1':
                 gtfs_name: 'GMN:   1:C:'
         @poll_delay = 5
 
