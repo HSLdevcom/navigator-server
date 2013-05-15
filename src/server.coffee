@@ -1,6 +1,8 @@
 http = require 'http'
 faye = require 'faye'
 
+# faye is used for handling lower level messaging between this navigator-server and
+# navigator-clients.
 bayeux = new faye.NodeAdapter
     mount: '/faye', timeout: 45
 
@@ -12,7 +14,7 @@ server = http.createServer (request, response) ->
 
 bayeux.attach server
 server.bayeux = bayeux
-module.exports = server
+module.exports = server # Make server visible in the Gruntfile.coffee
 
 bayeux.bind 'handshake', (client_id) ->
     console.log "client " + client_id + " connected"
@@ -20,12 +22,17 @@ bayeux.bind 'handshake', (client_id) ->
 client = bayeux.getClient()
 
 handle_event = (path, msg) ->
-    console.log path
+    console.log "publishing to channel " + path #+ " message " + JSON.stringify(msg)
     client.publish path, msg
 
 helsinki = require './helsinki.js'
 manchester = require './manchester.js'
 
+# Create new real-time data converters, hel_client and man_client, and pass handle_event
+# function for them that is used for publishing real-time public transport data to the
+# city-navigator clients that connect to this server. After creating a converter call
+# it's connect function to connect to the real-time data provider, for example,
+# HSL Live server.
 hel_client = new helsinki.HSLClient handle_event
 hel_client.connect()
 man_client = new manchester.TfGMClient handle_event
