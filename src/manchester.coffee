@@ -58,6 +58,10 @@ class TfGMClient
             resp.on 'data', (chunk) =>
                 data += chunk
             resp.on 'end', (chunk) =>
+                if resp.statusCode != 200
+                    console.log "request failed: code #{resp.statusCode}"
+                    @.set_poll_timer route_name, true
+                    return
                 objs = JSON.parse data
                 for vehicle in objs
                     if not vehicle['HasFix']
