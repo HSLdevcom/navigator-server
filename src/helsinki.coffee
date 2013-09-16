@@ -58,6 +58,7 @@ class HSLClient
             trip:
                 route: info.route
                 direction: info.direction
+                start_time: info.departure
             position:
                 latitude: parseFloat info.lat
                 longitude: parseFloat info.lng
