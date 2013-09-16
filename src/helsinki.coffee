@@ -10,6 +10,25 @@ col_names = [
     "snapped_bearing", "next_stop_index", "on_stop", "difference_from_timetable"
 ]
 
+# Convert route from the interface to proper ("JORE") route code
+# (The interface doesn't report route code for metro and train)
+# (Route code is needed to disambiguate routes in different cities)
+route_to_code = (route) ->
+    if route == "1"
+        # metro, Mellunmäki branch
+        return "1300M"
+    if route == "2"
+        # metro, Vuosaari branch
+        return "1300V"
+    if "IKNTHRZ".indexOf(route) != -1
+        # train, northern railroad
+        return "3001" + route
+    if "YSULEAM".indexOf(route) != -1
+        # train, western railroad (or M for Vantaankoski)
+        return "3002" + route
+    # something else, let's hope it's a route code already
+    return route
+
 # HSLClient connects to HSL Live server (Realtime API of vehicle locations) and
 # converts the received real-time data to the format used by city-navigator clients.
 # HSLClient uses @callback function (defined in server.coffee) to publish the data
@@ -56,7 +75,7 @@ class HSLClient
                 id: info.id
                 label: info.name
             trip:
-                route: info.route
+                route: route_to_code(info.route)
                 direction: info.direction
                 start_time: info.departure
             position:
@@ -68,7 +87,7 @@ class HSLClient
             timestamp: (parseInt info.unix_epoch_gps_time) / 1000
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
-        route = info.route.replace " ", "_"
+        route = route_to_code(info.route).replace " ", "_"
         vehicle_id = out_info.vehicle.id.replace " ", "_"
         path = "/location/helsinki/#{route}/#{vehicle_id}"
         @callback path, out_info, @args
