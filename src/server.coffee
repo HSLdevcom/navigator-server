@@ -29,6 +29,7 @@ helsinki = require './helsinki.js'
 manchester = require './manchester.js'
 tampere = require './tampere.js'
 helsinki_poll = require './helsinki-poll.js'
+helmi = require './helmi.js'
 
 # Create new real-time data converters, hel_client and man_client, and pass handle_event
 # function for them that is used for publishing real-time public transport data to the
@@ -43,3 +44,5 @@ tre_client = new tampere.SiriJSONClient handle_event
 tre_client.connect()
 hsl_poll_client = new helsinki_poll.HSLPollClient handle_event
 hsl_poll_client.connect()
+helmi_client = new helmi.HelmiClient handle_event
+helmi_client.connect()
