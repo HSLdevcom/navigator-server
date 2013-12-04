@@ -34,7 +34,9 @@ class TfGMClient
                 id: data['Registration']
             trip:
                 route: @routes[route_name].gtfs_name
-            timestamp: data['LastUpdated']
+                direction: "1"
+                operator: "GMN"
+            timestamp: new Date(data['LastUpdated']).getTime() / 1000
             position:
                 latitude: data['Latitude']
                 longitude: data['Longitude']

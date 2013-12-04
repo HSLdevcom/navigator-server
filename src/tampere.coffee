@@ -28,11 +28,13 @@ class SiriJSONClient
                 route: data.MonitoredVehicleJourney.LineRef.value
                 direction: data.MonitoredVehicleJourney.DirectionRef.value
                 start_time: data.MonitoredVehicleJourney.FramedVehicleJourneyRef.DatedVehicleJourneyRef
-            timestamp: data.RecordedAtTime
+                operator: data.MonitoredVehicleJourney.OperatorRef.value
+            timestamp: data.RecordedAtTime / 1000
             position:
                 latitude: data.MonitoredVehicleJourney.VehicleLocation.Latitude
                 longitude: data.MonitoredVehicleJourney.VehicleLocation.Longitude
                 bearing: data.MonitoredVehicleJourney.Bearing
+                delay: data.MonitoredVehicleJourney.Delay
         route = out_info.trip.route
         vehicle = out_info.vehicle.id
         path = "/location/tampere/#{route}/#{vehicle}"
