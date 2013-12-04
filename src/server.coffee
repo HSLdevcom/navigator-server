@@ -1,5 +1,38 @@
+
 http = require 'http'
 faye = require 'faye'
+url = require 'url'
+
+
+# global state: a mapping from vehicle id to its latest data
+state = {}
+
+# conversion from vehicle data item to siri format VehicleActivity entry
+to_vehicleactivity_item = (now, data) ->
+  ValidUntilTime: data.timestamp*1000+30*1000
+  RecordedAtTime: data.timestamp*1000
+  MonitoredVehicleJourney:
+    LineRef: value: data.trip.route
+    DirectionRef: value: data.trip.direction
+    FramedVehicleJourneyRef:
+      DataFrameRef: value: "#{now.getYear()+1900}-#{now.getMonth()}-#{now.getDate()}"
+      DatedVehicleJourneyRef: data.trip.start_time
+    OperatorRef: value: data.trip.operator
+# XXX unimplemented:
+#    OriginName:
+#      value:
+#      lang:
+#    DestinationName:
+#      value:
+#      lang:
+    Monitored: true
+    VehicleLocation:
+      Longitude: data.position.longitude
+      Latitude: data.position.latitude
+    Bearing: data.position.bearing
+    Delay: data.position.delay
+    VehicleRef: value: data.vehicle.id
+
 
 # faye is used for handling lower level messaging between this navigator-server and
 # navigator-clients.
@@ -8,10 +41,38 @@ bayeux = new faye.NodeAdapter
 
 # Handle non-Bayeux requests
 server = http.createServer (request, response) ->
-  response.writeHead 200, {'Content-Type': 'text/plain'}
-  response.write 'Nothing to see here'
-  response.end()
-
+  console.log "#{request.method} #{request.url}"
+  query = url.parse(request.url, true).query
+  pathname = url.parse(request.url).pathname
+  if pathname == "/" or pathname == "faye"
+    response.writeHead 200, {'Content-Type': 'text/plain'}
+    response.write 'Nothing to see here'
+    response.end()
+  else if pathname == "/siriaccess/vm/json"
+    now = new Date()
+    response.writeHead 200, {'Content-Type': 'application/json'}
+    response.write JSON.stringify
+      Siri:
+        version: "1.3"
+        ServiceDelivery:
+          ResponseTimestamp: now.getTime()
+          ProducerRef: value: "HSL"
+          Status: true
+          MoreData: false
+          VehicleMonitoringDelivery:
+            [
+              version: "1.3"
+              ResponseTimestamp: now.getTime()
+              Status: true
+              VehicleActivity: (to_vehicleactivity_item(now, data)                                 for id, data of state                                                           when (not query.lineRef? or data.trip.route == query.lineRef)                          and (not query.operatorRef? or data.trip.operator == query.operatorRef)                                                                                           and now.getTime() < data.timestamp*1000 + 60*1000)
+            ]
+    response.end()
+  else
+    response.writeHead 404, {'Content-Type': 'text/plain'}
+    response.write "Not found: #{request.url}"
+    response.end()
+    
+  
 bayeux.attach server
 server.bayeux = bayeux
 module.exports = server # Make server visible in the Gruntfile.coffee
@@ -22,7 +83,7 @@ bayeux.bind 'handshake', (client_id) ->
 client = bayeux.getClient()
 
 handle_event = (path, msg) ->
-    console.log "publishing to channel " + path #+ " message " + JSON.stringify(msg)
+    state[msg.vehicle.id] = msg
     client.publish path, msg
 
 helsinki = require './helsinki.js'
