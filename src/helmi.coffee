@@ -1,19 +1,43 @@
 
 net = require 'net'
 Tail = require('tail').Tail
+fs = require 'fs'
+moment = require 'moment'
 
+log_dir = "/home/haphut/vehiclereport/"
+log_file_start = "ITRADIOCOMM_"
+log_file_end = ".LOG"
+log_file_re = /^ITRADIOCOMM_.+\.LOG$/
 
 # global state: a mapping from vehicle id to its current route code
 vehicle_to_route = {}
 
 class HelmiClient
     constructor: (@callback, @args) ->
+        @tail = null
 
     connect: ->
-        # FIXME need to open today's log and switch at each midnight
-        tail = new Tail("/home/haphut/vehiclereport/ITRADIOCOMM_2013-12-04.LOG")
-        tail.on "line", (line) =>
-            @handle_line line
+        watcher = fs.watch log_dir, (event, filename) =>
+            if event == 'rename'
+                console.log('event:', event, '---', 'filename:', filename)
+                if log_file_re.test(filename)
+                    fs.open "#{log_dir}#{filename}", 'r', (err, fd) =>
+                        if not err?
+                            fs.close(fd, console.log)
+                            if @tail?
+                                @tail.unwatch()
+                            @tail = new Tail("#{log_dir}#{filename}")
+                            @tail.on "line", (line) =>
+                                @handle_line line
+                        else
+                            console.log(err)
+
+        if not @tail?
+            today_log = log_dir + log_file_start + moment().format('YYYY-MM-DD') + log_file_end
+            @tail = new Tail(today_log)
+            @tail.on "line", (line) =>
+                @handle_line line
+
 
     # handle_line function creates out_info objects of the lines received
     # and calls @callback to handle the created out_info objects. 
