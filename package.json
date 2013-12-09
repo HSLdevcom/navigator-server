@@ -13,11 +13,15 @@
   "author": "",
   "license": "EUPL v1.2/AGPLv3",
   "readmeFilename": "README.md",
-  "devDependencies": {
+  "dependencies": {
     "grunt": "~0.4.1",
-    "grunt-contrib-watch": "~0.3.1",
-    "grunt-contrib-coffee": "~0.6.0",
+    "tail": "~0.3.2",
+    "moment": "~2.4.0",
     "faye": "~0.8.9",
     "carrier": "~0.1.10"
+  },
+  "devDependencies": {
+    "grunt-contrib-watch": "~0.3.1",
+    "grunt-contrib-coffee": "~0.6.0"
   }
 }
