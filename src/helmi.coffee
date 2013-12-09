@@ -18,13 +18,19 @@ class HelmiClient
 
     connect: ->
         watcher = fs.watch log_dir, (event, filename) =>
+            # React only on new or removed files.
             if event == 'rename'
                 console.log('event:', event, '---', 'filename:', filename)
+                # Assume that new files matching the regex are more recent
+                # than the current one.
                 if log_file_re.test(filename)
+                    # Open to test that 'rename' was not triggered because
+                    # of a removal.
                     fs.open "#{log_dir}#{filename}", 'r', (err, fd) =>
                         if not err?
                             fs.close(fd, console.log)
                             if @tail?
+                                # Release previous log file.
                                 @tail.unwatch()
                             @tail = new Tail("#{log_dir}#{filename}")
                             @tail.on "line", (line) =>
@@ -33,6 +39,7 @@ class HelmiClient
                             console.log(err)
 
         if not @tail?
+            # Assume that today's log file exists on startup.
             today_log = log_dir + log_file_start + moment().format('YYYY-MM-DD') + log_file_end
             @tail = new Tail(today_log)
             @tail.on "line", (line) =>
