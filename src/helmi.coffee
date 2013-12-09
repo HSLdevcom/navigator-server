@@ -1,6 +1,6 @@
 
 net = require 'net'
-Tail = require('tail').Tail;
+Tail = require('tail').Tail
 
 
 # global state: a mapping from vehicle id to its current route code
