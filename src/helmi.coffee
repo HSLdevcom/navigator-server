@@ -40,7 +40,8 @@ class HelmiClient
 
         if not @tail?
             # Assume that today's log file exists on startup.
-            today_log = log_dir + log_file_start + moment().format('YYYY-MM-DD') + log_file_end
+            today_log = log_dir + log_file_start +
+                        moment().format('YYYY-MM-DD') + log_file_end
             @tail = new Tail(today_log)
             @tail.on "line", (line) =>
                 @handle_line line
