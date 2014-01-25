@@ -15,7 +15,8 @@ to_vehicleactivity_item = (now, data) ->
     LineRef: value: data.trip.route
     DirectionRef: value: data.trip.direction
     FramedVehicleJourneyRef:
-      DataFrameRef: value: "#{now.getYear()+1900}-#{now.getMonth()}-#{now.getDate()}"
+      # XXX should DataFrameRef increment at midnight or in the morning?
+      DataFrameRef: value: "#{now.getYear()+1900}-#{(now.getMonth()+1+100).toString().substring(1)}-#{(now.getDate()+100).toString().substring(1)}"
       DatedVehicleJourneyRef: data.trip.start_time
     OperatorRef: value: data.trip.operator
 # XXX unimplemented:
