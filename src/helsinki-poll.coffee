@@ -88,7 +88,7 @@ class HSLPollClient
                     @set_poll_timer "", true
                     return
 
-                lines = data.split "\n"
+                lines = data.split /\r?\n/
                 for line in lines
                     cols = line.split ';'
 
