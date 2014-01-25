@@ -65,7 +65,7 @@ class HelmiClient
             return if route == 0
             if route <= 10
                 return # tram data is better elsewhere
-            else if route <= 100
+            else if route <= 100 and not (route in [61])
                 route += 1000
             else if route in [506, 550, 552, 554]
                 route += 2000
