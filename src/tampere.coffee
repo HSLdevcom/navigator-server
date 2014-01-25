@@ -58,7 +58,7 @@ class SiriJSONClient
                     @.set_poll_timer "", true
                     return
                 objs = JSON.parse data
-                for vehicle in objs.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity
+                for vehicle in objs.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity or []
                     @.update_location vehicle
                 @.set_poll_timer "", false
         route.req.on 'error', (e) =>
