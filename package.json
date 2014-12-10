@@ -14,11 +14,12 @@
   "license": "EUPL v1.2/AGPLv3",
   "readmeFilename": "README.md",
   "dependencies": {
-    "grunt": "~0.4.1",
-    "tail": "~0.3.2",
-    "moment": "~2.4.0",
-    "faye": "~0.8.9",
-    "carrier": "~0.1.10"
+    "grunt": "~0.4.5",
+    "tail": "~0.4.0",
+    "moment": "~2.8.4",
+    "faye": "~1.0.3",
+    "carrier": "~0.1.14",
+    "vr": "git://github.com/JaniL/vr.git#5c66020738fd6f229e9f9a51bd8649b98b1bc859"
   },
   "devDependencies": {
     "grunt-contrib-watch": "~0.3.1",

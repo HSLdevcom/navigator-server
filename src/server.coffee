@@ -65,7 +65,10 @@ server = http.createServer (request, response) ->
               version: "1.3"
               ResponseTimestamp: now.getTime()
               Status: true
-              VehicleActivity: (to_vehicleactivity_item(now, data)                                 for id, data of state                                                           when (not query.lineRef? or data.trip.route == query.lineRef)                          and (not query.operatorRef? or data.trip.operator == query.operatorRef)                                                                                           and now.getTime() < data.timestamp*1000 + 60*1000)
+              VehicleActivity: (to_vehicleactivity_item(now, data) for id, data of state when true and
+                (not query.lineRef? or data.trip.route == query.lineRef) and
+                (not query.operatorRef? or data.trip.operator == query.operatorRef) and
+                now.getTime() < data.timestamp*1000 + 60*1000)
             ]
     response.end()
   else
@@ -92,6 +95,7 @@ manchester = require './manchester.js'
 tampere = require './tampere.js'
 helsinki_poll = require './helsinki-poll.js'
 helmi = require './helmi.js'
+vr_poll = require './vr_poll.js'
 
 # Create new real-time data converters, hel_client and man_client, and pass handle_event
 # function for them that is used for publishing real-time public transport data to the
@@ -108,3 +112,5 @@ hsl_poll_client = new helsinki_poll.HSLPollClient handle_event
 hsl_poll_client.connect()
 helmi_client = new helmi.HelmiClient handle_event
 helmi_client.connect()
+vr_poll_client = new vr_poll.VRPollClient handle_event
+vr_poll_client.connect()
