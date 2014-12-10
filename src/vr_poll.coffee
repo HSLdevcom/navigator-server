@@ -53,6 +53,7 @@ class VRPollClient
                         bearing: parseFloat info.dir
                         speed: (parseFloat extended_info.speed) / 3.6
                         delay: parseFloat extended_info.lateness
+                        next_stop_index: (i for i in extended_info.item when i.completed == 1).length + 1
                     timestamp: new Date().getTime() / 1000
 
                 # Create path/channel that is used for publishing the out_info for the

@@ -86,6 +86,7 @@ class HSLClient
                 odometer: parseFloat info.distance_from_start
                 speed: (parseFloat info.speed) / 3.6
                 delay: -(parseFloat info.difference_from_timetable)
+                next_stop_index: (parseInt info.next_stop_index) + 1
             timestamp: (parseInt info.unix_epoch_gps_time) / 1000
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
