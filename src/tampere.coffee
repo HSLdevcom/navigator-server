@@ -43,9 +43,9 @@ class SiriJSONClient
     poll_route: () ->
         route = @routes[""]
         opts =
-            host: '178.217.134.37'
-            port: 8080
-            path: "/siriaccess/vm/rest"
+            host: 'data.itsfactory.fi'
+            port: 80
+            path: "/siriaccess/vm/json"
         
         route.req = http.get opts, (resp) =>
             data = ''
