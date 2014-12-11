@@ -65,7 +65,10 @@ server = http.createServer (request, response) ->
               version: "1.3"
               ResponseTimestamp: now.getTime()
               Status: true
-              VehicleActivity: (to_vehicleactivity_item(now, data)                                 for id, data of state                                                           when (not query.lineRef? or data.trip.route == query.lineRef)                          and (not query.operatorRef? or data.trip.operator == query.operatorRef)                                                                                           and now.getTime() < data.timestamp*1000 + 60*1000)
+              VehicleActivity: (to_vehicleactivity_item(now, data) for id, data of state when true and
+                (not query.lineRef? or data.trip.route == query.lineRef) and
+                (not query.operatorRef? or data.trip.operator == query.operatorRef) and
+                now.getTime() < data.timestamp*1000 + 60*1000)
             ]
     response.end()
   else
