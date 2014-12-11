@@ -2,8 +2,7 @@
 vr = require 'vr'
 
 # Convert route from the interface to proper ("JORE") route code
-# (The interface doesn't report route code for metro and train)
-# (Route code is needed to disambiguate routes in different cities)
+# (Route code is needed to match the routes properly in other systems)
 route_to_code = (route) ->
     if "IKNTHRZ".indexOf(route) != -1
         # train, northern railroad
