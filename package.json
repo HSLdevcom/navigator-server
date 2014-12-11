@@ -19,7 +19,7 @@
     "moment": "~2.8.4",
     "faye": "~1.0.3",
     "carrier": "~0.1.14",
-    "vr": "git://github.com/JaniL/vr.git#5c66020738fd6f229e9f9a51bd8649b98b1bc859"
+    "vr": "JaniL/vr#5c66020738fd6f229e9f9a51bd8649b98b1bc859"
   },
   "devDependencies": {
     "grunt-contrib-watch": "~0.3.1",
