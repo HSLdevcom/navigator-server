@@ -44,7 +44,7 @@ class VRPollClient
                         label: info.guid
                     trip:
                         route: route_to_code(info.title)
-                        direction: if info.startStation == "HKI" then 1 else 2
+                        direction: if info.startStation == "HKI" then "1" else "2"
                         start_time: extended_info.item[0].scheduledDepartTime.replace ':', ''
                         operator: "HSL"
                     position:
