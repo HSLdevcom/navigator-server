@@ -56,7 +56,7 @@ class HelmiClient
             return # incomplete message
 
         if cols[3] == "POSITION "
-            info = 
+            info =
                 id: cols[5]
                 lat: cols[9]
                 lng: cols[7]
@@ -71,13 +71,22 @@ class HelmiClient
                 route += 2000
             else
                 route += 4000
-            vehicle_to_route[cols[5]] = "#{route}"
+            info =
+                route: "#{route}"
+                trip: cols[7]
+                next_stop: cols[8]
+                stop_status: cols[9]
+                distance_to_stop: cols[10]
+                speed: cols[11]
+                late_early: cols[12]
+                delay: cols[13]
+            vehicle_to_route[cols[5]] = info
             return # no position update to forward
         else
             return # unused message type
 
         if info.id of vehicle_to_route
-            info.route = vehicle_to_route[info.id]
+            info.details = vehicle_to_route[info.id]
         else
             return # route unknown
 
@@ -91,21 +100,22 @@ class HelmiClient
                 id: info.id
                 label: info.name
             trip:
-                route: info.route
+                route: info.details.route
                 direction: info.direction
-                start_time: info.departure
+                start_time: info.details.trip
                 operator: "HSL"
             position:
                 latitude: parseFloat info.lat / 1e6
                 longitude: parseFloat info.lng / 1e6
 #                bearing: parseFloat info.bearing
 #                odometer: parseFloat info.distance_from_start
-#                speed: (parseFloat info.speed) / 3.6
-#                delay: -(parseFloat info.difference_from_timetable)
+                speed: (parseFloat info.details.speed) / 3.6
+                delay: (if info.details.late_early == "E" then -1 else 1) *
+                  (parseInt(info.details.delay.substring(0,2)) * 60 + parseInt(info.details.delay.substring(3,5)))
             timestamp: timestamp
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
-        route = info.route.replace " ", "_"
+        route = info.details.route.replace " ", "_"
         vehicle_id = out_info.vehicle.id.replace " ", "_"
         path = "/location/helsinki/#{route}/#{vehicle_id}"
         @callback path, out_info, @args
