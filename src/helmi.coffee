@@ -78,7 +78,10 @@ class HelmiClient
                 lng: cols[7]
         else if cols[3] == "REPORT_F8"
             route = parseInt cols[6]
-            return if route <= 10
+            return if route == 0 # discard if no information about route
+            if route <= 10
+                return # tram data is better elsewhere
+
             today = moment().tz('Europe/Helsinki').format('YYYYMMDD')
             if today of calendars
                 calendar_type = calendars[today]
@@ -86,8 +89,6 @@ class HelmiClient
                 departure = calendar_type + "_" + route + "_" + trip_number
                 if departure of departures
                     departure_details = departures[departure]
-                else
-                    console.log departure
 
             if departure_details
                 route = departure_details[1]
