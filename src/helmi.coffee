@@ -104,7 +104,7 @@ class HelmiClient
                 route: "#{route}"
                 trip: start_time
                 direction: direction
-                next_stop: stops[cols[8].replace /\ /g, '']
+                next_stop: stops[cols[8].replace /[ ]/g, '']
                 stop_status: cols[9]
                 distance_to_stop: cols[10]
                 speed: cols[11]
