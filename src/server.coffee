@@ -32,6 +32,9 @@ to_vehicleactivity_item = (now, data) ->
       Latitude: data.position.latitude
     Bearing: data.position.bearing
     Delay: data.position.delay
+    MonitoredCall:
+      StopPointRef: data.position.next_stop
+      Order: data.position.next_stop_index
     VehicleRef: value: data.vehicle.id
 
 

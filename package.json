@@ -17,8 +17,10 @@
     "grunt": "~0.4.5",
     "tail": "~0.4.0",
     "moment": "~2.8.4",
+    "moment-timezone": "~0.2.5",
     "faye": "~1.0.3",
     "carrier": "~0.1.14",
+    "line-reader": "~0.2.4",
     "vr": "JaniL/vr#5c66020738fd6f229e9f9a51bd8649b98b1bc859"
   },
   "devDependencies": {

@@ -3,17 +3,33 @@ net = require 'net'
 Tail = require('tail').Tail
 fs = require 'fs'
 moment = require 'moment'
+tz = require 'moment-timezone'
+lineReader = require 'line-reader'
 
 log_dir = "/home/haphut/vehiclereport/"
 log_file_start = "ITRADIOCOMM_"
 log_file_end = ".LOG"
 log_file_re = /^ITRADIOCOMM_.+\.LOG$/
 
+calendar_file = "data/calendar.skv"
+departures_file = "data/helmi_departures.csv"
+stops_file = "data/node.txt"
+
 # global state: a mapping from vehicle id to its current route code
 vehicle_to_route = {}
+calendars = {}
+stops = {}
+departures = {}
 
 class HelmiClient
     constructor: (@callback, @args) ->
+        lineReader.eachLine calendar_file, (line, last) ->
+            calendars[line.split(';')[3]] = line.split(';')[4]
+        lineReader.eachLine stops_file, (line, last) ->
+            stops[line.split(';')[0]] = line.split(';')[1]
+        lineReader.eachLine departures_file, (line, last) ->
+            details = line.split(';')
+            departures[details[0]] = [details[1], details[2], details[3]]
         @tail = null
 
     connect: ->
@@ -62,9 +78,21 @@ class HelmiClient
                 lng: cols[7]
         else if cols[3] == "REPORT_F8"
             route = parseInt cols[6]
-            return if route == 0
-            if route <= 10
-                return # tram data is better elsewhere
+            return if route <= 10
+            today = moment().tz('Europe/Helsinki').format('YYYYMMDD')
+            if today of calendars
+                calendar_type = calendars[today]
+                trip_number = parseInt cols[7]
+                departure = calendar_type + "_" + route + "_" + trip_number
+                if departure of departures
+                    departure_details = departures[departure]
+                else
+                    console.log departure
+
+            if departure_details
+                route = departure_details[1]
+                direction =  departure_details[0]
+                start_time =  departure_details[2]
             else if route <= 100 and not (route in [61])
                 route += 1000
             else if route in [506, 550, 552, 554]
@@ -73,8 +101,9 @@ class HelmiClient
                 route += 4000
             info =
                 route: "#{route}"
-                trip: cols[7]
-                next_stop: cols[8]
+                trip: start_time
+                direction: direction
+                next_stop: stops[cols[8].replace /\ /g, '']
                 stop_status: cols[9]
                 distance_to_stop: cols[10]
                 speed: cols[11]
@@ -95,13 +124,26 @@ class HelmiClient
             return
         timestamp = new Date().getTime() / 1000
 
+        if info.details.delay and info.details.next_stop
+            delay_multiplier = 0
+
+            if info.details.late_early == "E" and
+              info.trip < moment().tz('Europe/Helsinki').format('HHmm')
+                delay_multiplier = -1
+            else if info.details.late_early == "L"
+                delay_multiplier = 1
+
+            delay = delay_multiplier *
+                (parseInt(info.details.delay.substring(0,2)) * 60 +
+                 parseInt(info.details.delay.substring(3,5)))
+
         out_info =
             vehicle:
                 id: info.id
                 label: info.name
             trip:
                 route: info.details.route
-                direction: info.direction
+                direction: info.details.direction
                 start_time: info.details.trip
                 operator: "HSL"
             position:
@@ -110,8 +152,8 @@ class HelmiClient
 #                bearing: parseFloat info.bearing
 #                odometer: parseFloat info.distance_from_start
                 speed: (parseFloat info.details.speed) / 3.6
-                delay: (if info.details.late_early == "E" then -1 else 1) *
-                  (parseInt(info.details.delay.substring(0,2)) * 60 + parseInt(info.details.delay.substring(3,5)))
+                delay: delay
+                next_stop: info.details.next_stop
             timestamp: timestamp
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
