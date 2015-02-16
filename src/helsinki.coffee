@@ -70,24 +70,38 @@ class HSLClient
             return
         if not info.route
             return
+        info.id = info.id.trim()
+        if info.id.match /^RHKL/
+            type = "tram"
+        else if info.id.match /^metro/
+            type = "subway"
+        else if info.id.match /^[kK]/
+            type = "kutsuplus"  # HSL area on-demand bus service
+        else
+            throw new Error ('unknown id ' + info.id)
         out_info =
             vehicle:
                 id: info.id
-                label: info.name
             trip:
                 route: route_to_code(info.route)
-                direction: info.direction
-                start_time: info.departure
                 operator: "HSL"
             position:
                 latitude: parseFloat info.lat
                 longitude: parseFloat info.lng
                 bearing: parseFloat info.bearing
-                odometer: parseFloat info.distance_from_start
-                speed: (parseFloat info.speed) / 3.6
-                delay: -(parseFloat info.difference_from_timetable)
-                next_stop_index: (parseInt info.next_stop_index) + 1
             timestamp: (parseInt info.unix_epoch_gps_time) / 1000
+
+        # Many vehicles do not actually send data, just zeros in many fields
+        if type != "kutsuplus"
+            out_info.trip.direction = info.direction
+        if type != "metro"
+            out_info.position.speed = (parseFloat info.speed) / 3.6
+        if type == "tram"
+            out_info.trip.start_time = info.departure
+            out_info.position.odometer = parseFloat info.distance_from_start
+            out_info.position.delay = -(parseFloat info.difference_from_timetable)
+            out_info.position.next_stop_index = (parseInt info.next_stop_index) + 1
+
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
         route = route_to_code(info.route).replace " ", "_"
