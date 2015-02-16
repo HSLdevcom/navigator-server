@@ -71,7 +71,13 @@ class HSLClient
         if not info.route
             return
         info.id = info.id.trim()
+
         if info.id.match /^RHKL/
+            # Tram line codes start with 10. Most are single numbered, and then we have tram line 10
+            if not (info.route.match(/^100/) or info.route.match(/^1010/))
+                # Sometimes the API gives us trams which don't have the right route types,
+                # so we just ignore those
+                return
             type = "tram"
         else if info.id.match /^metro/
             type = "subway"
@@ -79,6 +85,7 @@ class HSLClient
             type = "kutsuplus"  # HSL area on-demand bus service
         else
             throw new Error ('unknown id ' + info.id)
+
         out_info =
             vehicle:
                 id: info.id
@@ -94,7 +101,7 @@ class HSLClient
         # Many vehicles do not actually send data, just zeros in many fields
         if type != "kutsuplus"
             out_info.trip.direction = info.direction
-        if type != "metro"
+        if type != "subway"
             out_info.position.speed = (parseFloat info.speed) / 3.6
         if type == "tram"
             out_info.trip.start_time = info.departure
