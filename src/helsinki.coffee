@@ -72,6 +72,8 @@ class HSLClient
             return
         info.id = info.id.trim()
         if info.id.match /^RHKL/
+            if not (info.route.match(/^100/) or info.route.match(/^1010/))
+                return
             type = "tram"
         else if info.id.match /^metro/
             type = "subway"
