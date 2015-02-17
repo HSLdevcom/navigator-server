@@ -36,25 +36,41 @@ route_to_code = (route) ->
 class HSLClient
     constructor: (@callback, @args) ->
 
-    connect: ->
+    connect: =>
         # Connect to HSL Live server via PUSH interface
         @client = net.connect 8080, '83.145.232.209' 
+        @client.on 'error', @handle_error
         @client.on 'connect', (conn) =>
             console.log "HSLClient connected"
             # Tell the HSL Live server that we want just info of the vehicles logged on route
             @client.write '&okffin;tuusula1 onroute:1&'
 
-        line_handler = (line) =>
-            @.handle_line line
-        # We use carrier module to receive new-line terminated messages from HSL Live server
-        # and pass those lines to the handle_line function
-        @carrier = carrier.carry @client 
-        @carrier.on 'line', line_handler
+            # We use carrier module to receive new-line terminated messages from HSL Live server
+            # and pass those lines to the handle_line function
+            @carrier = carrier.carry @client 
+            @carrier.on 'line', @handle_line
+
+            @reset_timeout()
+
+    handle_error: (error) =>
+        console.log "Cannot connect to HSL Live", error
+        @timeout = setTimeout(@connect, 30000)
+
+    reset_timeout: =>
+        if @timeout?
+            clearTimeout @timeout
+        @timeout = setTimeout (@handle_timeout), 15000
+
+    handle_timeout: =>
+        console.log "Timeout reading HSL Live data, reconnecting"
+        @client.end()  # This also closes the @carrier via 'end' Event
+        @connect()
 
     # handle_line function creates out_info objects of the lines received from carrier
     # and calls @callback to handle the created out_info objects. The out_info object
     # format should be same as for the manchester.coffee.
-    handle_line: (line) ->
+    handle_line: (line) =>
+        @reset_timeout()
         #console.log "Received line " + JSON.stringify(line)
         cols = line.split ';'
         if cols.length < 10
