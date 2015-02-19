@@ -27,7 +27,7 @@ route_to_code = (route) ->
         # train, western railroad (or M for Vantaankoski)
         return "3002" + route
     # something else, let's hope it's a route code already
-    return route
+    return route.substring(0, 5).trim()
 
 # HSLClient connects to HSL Live server (Realtime API of vehicle locations) and
 # converts the received real-time data to the format used by city-navigator clients.
