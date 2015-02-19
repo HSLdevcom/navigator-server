@@ -6,7 +6,7 @@ moment = require 'moment'
 tz = require 'moment-timezone'
 lineReader = require 'line-reader'
 
-log_dir = "/home/haphut/vehiclereport/"
+log_dir = "/home/hslhelmi/vehiclereport/"
 log_file_start = "ITRADIOCOMM_"
 log_file_end = ".LOG"
 log_file_re = /^ITRADIOCOMM_.+\.LOG$/
