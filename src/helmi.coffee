@@ -78,8 +78,10 @@ class HelmiClient
                 lng: cols[7]
         else if cols[3] == "REPORT_F8"
             route = parseInt cols[6]
+            vehicle = parseInt cols[5]
+
             return if route == 0 # discard if no information about route
-            if route <= 10
+            if route <= 10 or vehicle < 1000
                 return # tram data is better elsewhere
 
             today = moment().tz('Europe/Helsinki').format('YYYYMMDD')
