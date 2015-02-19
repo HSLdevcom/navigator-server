@@ -111,8 +111,8 @@ man_client = new manchester.TfGMClient handle_event
 man_client.connect()
 tre_client = new tampere.SiriJSONClient handle_event
 tre_client.connect()
-hsl_poll_client = new helsinki_poll.HSLPollClient handle_event
-hsl_poll_client.connect()
+#hsl_poll_client = new helsinki_poll.HSLPollClient handle_event
+#hsl_poll_client.connect()
 helmi_client = new helmi.HelmiClient handle_event
 helmi_client.connect()
 vr_poll_client = new vr_poll.VRPollClient handle_event
