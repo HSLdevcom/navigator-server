@@ -30,7 +30,7 @@ module.exports = (grunt) ->
 
   grunt.registerTask 'start-server', 'Start the server', ->
     bayeux = require './lib/server.js'
-    bayeux.listen 9002
+    bayeux.listen grunt.option('port') || 9002
 
   grunt.registerTask 'default', ['coffee', 'copy']
   grunt.registerTask 'server', ['coffee', 'copy','start-server', 'watch']
