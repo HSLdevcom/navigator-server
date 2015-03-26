@@ -107,7 +107,8 @@ class HSLClient
         else if info.id.match /^[kK]/
             type = "kutsuplus"  # HSL area on-demand bus service
         else
-            throw new Error ('unknown id ' + info.id)
+            console.log 'unknown id ' + info.id
+            return
 
         out_info =
             vehicle:
