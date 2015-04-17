@@ -58,9 +58,13 @@ class SiriJSONClient
                     @.set_poll_timer "", true
                     return
                 objs = JSON.parse data
-                for vehicle in objs.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity or []
-                    @.update_location vehicle
-                @.set_poll_timer "", false
+                if objs.Siri?.ServiceDelivery
+                    for vehicle in objs.Siri.ServiceDelivery.VehicleMonitoringDelivery[0].VehicleActivity or []
+                        @.update_location vehicle
+                    @.set_poll_timer "", false
+                else
+                    @.set_poll_timer "", true
+                    return
         route.req.on 'error', (e) =>
             console.log "polling failed: " + e.message
             route.req = null
