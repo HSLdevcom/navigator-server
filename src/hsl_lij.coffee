@@ -25,7 +25,7 @@ class LIJClient
                 id: vehi
             trip:
                 route: line
-                operator: "LIJ"
+                operator: "HSL"
                 direction: dir
                 start_time: start_time
             position:
