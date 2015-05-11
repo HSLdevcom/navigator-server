@@ -20,6 +20,13 @@ class LIJClient
 
         info = JSON.parse(message).VP
 
+        if dir == "undefined"
+            dir = undefined
+        if next_stop == "undefined"
+            next_stop = undefined
+        if start_time == "undefined"
+            start_time = undefined
+
         out_info =
             vehicle:
                 id: vehi
