@@ -35,7 +35,7 @@ class LIJClient
                 next_stop: next_stop
                 speed: info.spd
                 delay: info.dl
-                next_stop: next_stop
+                next_stop_index: info.stop_index
             timestamp: info.tsi
 
         # Create path/channel that is used for publishing the out_info for the
