@@ -2,6 +2,7 @@
 http = require 'http'
 faye = require 'faye'
 url = require 'url'
+mqtt_publisher = require './mqtt_publisher.js'
 
 
 # global state: a mapping from vehicle id to its latest data
@@ -48,12 +49,12 @@ server = http.createServer (request, response) ->
   console.log "#{request.method} #{request.url}"
   query = url.parse(request.url, true).query
   pathname = url.parse(request.url).pathname
+  now = new Date()
   if pathname == "/" or pathname == "faye"
     response.writeHead 200, {'Content-Type': 'text/plain'}
     response.write 'Nothing to see here'
     response.end()
   else if pathname == "/siriaccess/vm/json"
-    now = new Date()
     response.writeHead 200, {'Content-Type': 'application/json'}
     response.write JSON.stringify
       Siri:
@@ -73,6 +74,16 @@ server = http.createServer (request, response) ->
                 (not query.operatorRef? or data.trip.operator == query.operatorRef) and
                 now.getTime() < data.timestamp*1000 + 60*1000)
             ]
+    response.end()
+  else if pathname.match /^\/hfp\//
+    response.writeHead 200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'}
+    messages = {}
+    pattern = decodeURIComponent(pathname).replace /\/$/, "/#"
+    for id, data of state
+      topic = mqtt_publisher.to_mqtt_topic(data)
+      if now.getTime() < data.timestamp*1000 + 60*1000 and mqtt_publisher.mqtt_match(pattern, topic)
+        messages[topic] = mqtt_publisher.to_mqtt_payload(data)
+    response.write JSON.stringify messages
     response.end()
   else
     response.writeHead 404, {'Content-Type': 'text/plain'}
