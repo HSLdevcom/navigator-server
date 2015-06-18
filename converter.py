@@ -1,3 +1,4 @@
+import sys
 import csv
 
 dest_csv = csv.reader(open('dest.skv', 'r'), delimiter=';')
@@ -27,6 +28,7 @@ for line in pointlst_csv:
     dep_times[line[3]+';'+line[4]+';'+line[5]] = line[14][:4]
 
 for line in journey_csv:
-  print line[3]+'_'+line[4]+'_'+line[5]+';'+line[6]+';'+dest[line[11]]+';'+dep_times[line[3]+';'+line[4]+';'+line[5]] 
-
-
+  if line[11] in dest:
+    print line[3]+'_'+line[4]+'_'+line[5]+';'+line[6]+';'+dest[line[11]]+';'+dep_times[line[3]+';'+line[4]+';'+line[5]]
+  else:
+    print >>sys.stderr, "pattern %s not found" % line[11]
