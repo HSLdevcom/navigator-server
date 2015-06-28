@@ -7,8 +7,8 @@ route_to_code = (route) ->
     if "IKNTHRZ".indexOf(route) != -1
         # train, northern railroad
         return "3001" + route
-    if "YSULEAM".indexOf(route) != -1
-        # train, western railroad (or M for Vantaankoski)
+    if "YSULEAMP".indexOf(route) != -1
+        # train, western railroad (or M/P for Vantaankoski)
         return "3002" + route
     # something else, let's hope it's a route code already
     return route
