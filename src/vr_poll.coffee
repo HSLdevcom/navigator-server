@@ -11,7 +11,7 @@ route_to_code = (route) ->
         # train, western railroad (or M/P for Vantaankoski)
         return "3002" + route
     # something else, let's hope it's a route code already
-    return route
+    return ""+route
 
 class VRPollClient
     constructor: (@callback, @args) ->
