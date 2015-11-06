@@ -16,7 +16,7 @@ def jore_code(line):
     return '4'+line
   elif line in ('61', '61V'):
     return '40'+line
-  elif line in ('1', '1A', '2', '2X', '3', '3X', '4', '4T', '5', '6', '6T', '6X', '7A', '7B', '8', '9', '9X'):
+  elif line in ('1', '1A', '2', '2X', '3', '3X', '4', '4T', '5', '6', '6T', '6X', '7A', '7B', '7X', '8', '9', '9X'):
     return '100'+line
   elif len(re.match(r'\d*', line).group(0)) == 2: # default case for 2 digits:
     return '10'+line
