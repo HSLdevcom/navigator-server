@@ -1,6 +1,6 @@
 #!/bin/bash
 ORG=hsldevcom
-DOCKER_IMAGE=navigatorserver
+DOCKER_IMAGE=navigator-server
 
 # Set these environment variables
 #DOCKER_TAG=
