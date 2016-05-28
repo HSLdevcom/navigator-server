@@ -76,7 +76,7 @@ server = http.createServer (request, response) ->
             ]
     response.end()
   else if pathname.match /^\/hfp\//
-    response.writeHead 200, {'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*'}
+    response.writeHead 200, {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
     messages = {}
     pattern = decodeURIComponent(pathname).replace /\/$/, "/#"
     for id, data of state
