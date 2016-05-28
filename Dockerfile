@@ -10,7 +10,7 @@ ADD package.json ${DIR_PATH}/package.json
 RUN npm install
 ADD . ${DIR_PATH}
 
-RUN chown -R 9999:9999 ${DIR_PATH}
+RUN chmod -R a+rwX ${DIR_PATH}
 USER 9999
 
 CMD grunt server --port ${PORT} --stack
