@@ -20,6 +20,8 @@ to_mqtt_topic = (msg) ->
         mode = "rail"
     else if route.match /^10(0|10)/
         mode = "tram"
+    else if route.match /^1019/
+        mode = "ferry"
     else
         mode = "bus"
 
