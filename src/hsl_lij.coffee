@@ -35,15 +35,18 @@ class LIJClient
                 operator: "HSL"
                 direction: dir
                 start_time: start_time
+                start_date: info.oday
             position:
                 latitude: info.lat
                 longitude: info.long
                 bearing: info.hdg
+                odometer: info.odo
                 next_stop: next_stop
                 speed: info.spd
                 delay: info.dl
                 next_stop_index: info.stop_index
             timestamp: info.tsi
+            source: info.source
 
         # Create path/channel that is used for publishing the out_info for the
         # interested navigator-proto clients via the @callback function
