@@ -6,6 +6,24 @@ mqtt_match = (pattern, topic) ->
     return topic.match "^"+regex+"$"
 
 
+interpret_jore = (routeId) ->
+    if routeId?.match /^1019/
+        [mode, routeType, route] = ["FERRY", 4, "Ferry"]
+    else if routeId?.match /^1300/
+        [mode, routeType, route] = ["SUBWAY", 1, routeId.substring(4,5)]
+    else if routeId?.match /^300../
+        [mode, routeType, route] = ["RAIL", 2, routeId.substring(4,5)]
+    else if routeId?.match /^10(0.|10)/
+        [mode, routeType, route] = ["TRAM", 0, routeId.replace(/^.0*/,"")]
+    else if routeId?.match /^(1|2|4|5|6|7|9).../
+        [mode, routeType, route] = ["BUS", 3, routeId.replace(/^.0*/,"")]
+    else
+        # unknown, assume bus
+        [mode, routeType, route] = ["BUS", 3, routeId]
+
+    return [mode, routeType, route]
+
+
 to_mqtt_topic = (msg) ->
     x = msg.position.latitude
     y = msg.position.longitude
@@ -25,14 +43,36 @@ to_mqtt_topic = (msg) ->
     else
         mode = "bus"
 
-    return "/hfp/journey/#{mode}/#{msg.vehicle.id}/#{msg.trip.route}/#{msg.trip.direction}/XXX/#{msg.trip.start_time}/#{msg.position.next_stop}/"+geohash
+    headsign = "XXX" # not available from current sources
+
+    return "/hfp/journey/#{mode}/#{msg.vehicle.id}/#{msg.trip.route}/#{msg.trip.direction}/#{headsign}/#{msg.trip.start_time}/#{msg.position.next_stop}/"+geohash
 
 
 to_mqtt_payload = (msg) ->
+    now = moment().tz('Europe/Helsinki')
+
+    # if there's start_time but no start_date, guess one
+    if msg.trip.start_time? and not msg.trip.start_date?
+        start_hour = parseInt msg.trip.start_time.substring(0, 2)
+        now_hour = now.hour()
+
+        oday = moment().tz('Europe/Helsinki')
+
+        if start_hour > 16 and now_hour < 8
+            # guess departure was yesterday instead of >8 hours in future
+            oday.subtract(1, 'day')
+        else if start_hour < 8 and now_hour > 16
+            # guess departure is tomorrow instead of >8 hours ago
+            oday.add(1, 'day')
+        else
+            oday = now
+    else
+        oday = undefined
+
     VP:
-        desi: msg.trip.route
+        desi: interpret_jore(msg.trip.route)[2]
         dir: msg.trip.direction
-        oper: "XXX"
+        oper: "XXX" # we don't have operator id yet
         veh: msg.vehicle.id
         tst: moment(msg.timestamp*1000).toISOString()
         tsi: Math.floor(msg.timestamp)
@@ -42,11 +82,12 @@ to_mqtt_payload = (msg) ->
         long: msg.position.longitude
         dl: msg.position.delay
         odo: msg.position.odometer
-        oday: "XXX"
-        jrn: "XXX"
-        line: msg.trip.route
+        oday: msg.trip.start_day or oday?.format("YYYY-MM-DD")
+        jrn: "XXX"  # we don't have departure id yet
+        line: "XXX" # we don't have stop pattern id yet
         start: msg.trip.start_time
         stop_index: msg.position.next_stop_index
+        source: msg.source
 
 
 module.exports =

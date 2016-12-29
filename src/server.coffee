@@ -72,7 +72,7 @@ server = http.createServer (request, response) ->
               VehicleActivity: (to_vehicleactivity_item(now, data) for id, data of state when true and
                 (not query.lineRef? or data.trip.route == query.lineRef) and
                 (not query.operatorRef? or data.trip.operator == query.operatorRef) and
-                now.getTime() < data.timestamp*1000 + 60*1000)
+                now.getTime() < data.timestamp*1000 + 5*60*1000)
             ]
     response.end()
   else if pathname.match /^\/hfp\//
@@ -81,7 +81,7 @@ server = http.createServer (request, response) ->
     pattern = decodeURIComponent(pathname).replace /\/$/, "/#"
     for id, data of state
       topic = mqtt_publisher.to_mqtt_topic(data)
-      if now.getTime() < data.timestamp*1000 + 60*1000 and mqtt_publisher.mqtt_match(pattern, topic)
+      if now.getTime() < data.timestamp*1000 + 5*60*1000 and mqtt_publisher.mqtt_match(pattern, topic)
         messages[topic] = mqtt_publisher.to_mqtt_payload(data)
     response.write JSON.stringify messages
     response.end()
