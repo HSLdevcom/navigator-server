@@ -1,16 +1,14 @@
-FROM node:0.12
+FROM node:6
 MAINTAINER Reittiopas version: 0.1
 
 ENV DIR_PATH=/opt/navigatorserver
 ENV PORT=8080
+ENV NODE_OPTS=''
 RUN mkdir -p ${DIR_PATH}
 WORKDIR ${DIR_PATH}
-RUN npm install -g grunt-cli
+RUN npm install grunt-cli
 ADD package.json ${DIR_PATH}/package.json
 RUN npm install
 ADD . ${DIR_PATH}
 
-RUN chmod -R a+rwX ${DIR_PATH}
-USER 9999
-
-CMD grunt server --port ${PORT} --stack
+CMD node $NODE_OPTS ./node_modules/.bin/grunt server --port ${PORT} --stack
