@@ -1,0 +1,17 @@
+sudo: required
+
+branches:
+  only:
+    - master
+    - /201[7-9][0-1][0-9][0-3][0-9]/
+
+services: docker
+
+language: node_js
+node_js:
+  - "8"
+cache:
+  directories:
+    - node_modules
+script:
+  - ./build-docker-image.sh
