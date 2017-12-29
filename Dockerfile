@@ -11,4 +11,4 @@ ADD package.json ${DIR_PATH}/package.json
 RUN npm install
 ADD . ${DIR_PATH}
 
-CMD node $NODE_OPTS ./node_modules/.bin/grunt server --port ${PORT} --stack
+CMD node $NODE_OPTS ./node_modules/.bin/grunt server --port=${PORT} --stack
