@@ -22,7 +22,7 @@
     "carrier": "~0.3.0",
     "line-reader": "~0.4.0",
     "vr": "JaniL/vr#5c66020738fd6f229e9f9a51bd8649b98b1bc859",
-    "mqtt": "^2.15.0"
+    "mqtt": "^2.18.8"
   },
   "devDependencies": {
     "grunt-contrib-watch": "~1.0.0",
