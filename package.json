@@ -14,7 +14,7 @@
   "license": "EUPL v1.2/AGPLv3",
   "readmeFilename": "README.md",
   "dependencies": {
-    "grunt": "~1.0.1",
+    "grunt": "~1.0.4",
     "tail": "~1.2.3",
     "moment": "~2.20.1",
     "moment-timezone": "~0.5.14",
