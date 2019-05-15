@@ -14,6 +14,7 @@
   "license": "EUPL v1.2/AGPLv3",
   "readmeFilename": "README.md",
   "dependencies": {
+    "grunt-cli": "~1.3.2",
     "grunt": "~1.0.1",
     "tail": "~1.2.3",
     "moment": "~2.20.1",
