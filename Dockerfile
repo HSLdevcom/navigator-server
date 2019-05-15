@@ -6,7 +6,6 @@ ENV PORT=8080
 ENV NODE_OPTS=''
 RUN mkdir -p ${DIR_PATH}
 WORKDIR ${DIR_PATH}
-RUN npm install grunt-cli
 ADD package.json ${DIR_PATH}/package.json
 RUN npm install
 ADD . ${DIR_PATH}
