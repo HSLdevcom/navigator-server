@@ -1,4 +1,4 @@
-FROM node:6
+FROM node:10
 MAINTAINER Reittiopas version: 0.1
 
 ENV DIR_PATH=/opt/navigatorserver
