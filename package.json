@@ -18,7 +18,7 @@
     "grunt": "~1.0.1",
     "tail": "~1.2.3",
     "moment": "~2.20.1",
-    "moment-timezone": "~0.5.14",
+    "moment-timezone": "~0.5.27",
     "faye": "~1.2.4",
     "carrier": "~0.3.0",
     "line-reader": "~0.4.0",
