@@ -19,7 +19,7 @@
     "tail": "~1.2.3",
     "moment": "~2.20.1",
     "moment-timezone": "~0.5.14",
-    "faye": "~1.2.4",
+    "faye": "~1.2.5",
     "carrier": "~0.3.0",
     "line-reader": "~0.4.0",
     "vr": "JaniL/vr#5c66020738fd6f229e9f9a51bd8649b98b1bc859",
